@@ -33,8 +33,6 @@ To set up access to the Kubernetes cluster, you need a kubeconfig file. In this 
 
 You can install the OCI CLI using the following command:
 
-bash
-
 `bash -c "$(curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh)"`
 
 Please follow the prompts to proceed with the installation.
@@ -163,7 +161,7 @@ resource "oci_containerengine_node_pool" "k8s_node_pool" {
     }
     size = 2
   }
-  node_shape = "VM.Standard.A1.Flex"
+  node_shape = "VM.Standard.A1.Flex
 '''
 
 Each node in the node pool has a configuration of 6 GB memory and 1 OCPU:
