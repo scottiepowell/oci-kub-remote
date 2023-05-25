@@ -162,7 +162,6 @@ resource "oci_containerengine_node_pool" "k8s_node_pool" {
     size = 2
   }
   node_shape = "VM.Standard.A1.Flex
-'''
 
 Each node in the node pool has a configuration of 6 GB memory and 1 OCPU:
 
