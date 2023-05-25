@@ -43,19 +43,13 @@ Please follow the prompts to proceed with the installation.
 
 Initialize the Terraform workspace:
 
-bash
-
 `terraform init`
 
 Plan the deployment:
 
-bash
-
 `terraform plan`
 
 Apply the changes to reach the desired state of the configuration:
-
-bash
 
 `terraform apply`
 
@@ -67,13 +61,9 @@ The Terraform code outlined here involves several key stages of setting up and c
 
 The process begins by setting up a Kubernetes provider and indicating the path to the kubeconfig file. This is performed with:
 
-hcl
-
 `provider "kubernetes" {   config_path = var.kube_config_path }`
 
 Then, a namespace `idp-ns` is created in the Kubernetes cluster:
-
-hcl
 
 `resource "kubernetes_namespace" "idp_namespace" {   metadata {     name = "idp-ns"   } }`
 
@@ -81,23 +71,17 @@ hcl
 
 The code pulls information about a node pool from OCI, storing a list of active nodes in the `active_nodes` local variable:
 
-hcl
-
 `data "oci_containerengine_node_pool" "idp_k8s_np" {   node_pool_id = var.node_pool_id } locals {   active_nodes = [for node in data.oci_containerengine_node_pool.idp_k8s_np.nodes : node if node.state == "ACTIVE"] }`
 
 ### OCI Provider and VCN Configuration
 
 The code then configures the OCI provider, and sets up a Virtual Cloud Network (VCN) using the `oracle-terraform-modules/vcn/oci` module. The VCN includes an Internet Gateway, NAT Gateway, and Service Gateway. Additionally, it sets up two subnets: one public and one private:
 
-hcl
-
 `provider "oci" {   tenancy_ocid     = var.compartment_id   user_ocid        = var.user_ocid   fingerprint      = var.fingerprint   region           = var.region   private_key_path = file(var.private_key_path) }`
 
 The VCN and subnet configuration is done using:
 
-hcl
-
-```hcl
+```
 module "vcn" {
   source  = "oracle-terraform-modules/vcn/oci"
   version = "3.1.0"
@@ -123,9 +107,7 @@ module "vcn" {
 
 A Kubernetes cluster is then created in the VCN. Public access is enabled, and the public subnet is specified as its endpoint. The pod and service CIDRs are defined, and the public subnet is indicated for load balancer services:
 
-hcl
-
-```hcl
+```
 resource "oci_containerengine_cluster" "k8s_cluster" {
   compartment_id     = var.compartment_id
   kubernetes_version = "v1.26.2"
@@ -155,31 +137,46 @@ The script fetches the list of availability domains in the compartment and sets 
 
 First, availability domains are fetched with:
 
-hcl
 
 `data "oci_identity_availability_domains" "ads" {   compartment_id = var.compartment_id }`
 
 Then the node pool is set up:
 
-hcl
-
-`resource "oci_containerengine_node_pool" "k8s_node_pool" {   cluster_id         = oci_containerengine_cluster.k8s_cluster.id   compartment_id     = var.compartment_id   kubernetes_version = "v1.26.2"   name               = "idp-k8s-node-pool"   node_config_details {     placement_configs {       availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name       subnet_id           = oci_core_subnet.vcn_private_subnet.id     }     placement_configs {       availability_domain = data.oci_identity_availability_domains.ads.availability_domains[1].name       subnet_id           = oci_core_subnet.vcn_private_subnet.id     }     placement_configs {       availability_domain = data.oci_identity_availability_domains.ads.availability_domains[2].name       subnet_id           = oci_core_subnet.vcn_private_subnet.id     }     size = 2   }   node_shape = "VM.Standard.A1.Flex"`
+```
+resource "oci_containerengine_node_pool" "k8s_node_pool" {
+  cluster_id         = oci_containerengine_cluster.k8s_cluster.id
+  compartment_id     = var.compartment_id
+  kubernetes_version = "v1.26.2"
+  name               = "idp-k8s-node-pool"
+  node_config_details {
+    placement_configs {
+      availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
+      subnet_id           = oci_core_subnet.vcn_private_subnet.id
+    }
+    placement_configs {
+      availability_domain = data.oci_identity_availability_domains.ads.availability_domains[1].name
+      subnet_id           = oci_core_subnet.vcn_private_subnet.id
+    }
+    placement_configs {
+      availability_domain = data.oci_identity_availability_domains.ads.availability_domains[2].name
+      subnet_id           = oci_core_subnet.vcn_private_subnet.id
+    }
+    size = 2
+  }
+  node_shape = "VM.Standard.A1.Flex"
+'''
 
 Each node in the node pool has a configuration of 6 GB memory and 1 OCPU:
-
-hcl
 
   `node_shape_config {     memory_in_gbs = 6     ocpus         = 1   }`
 
 Node source details specify the image used for nodes:
 
-hcl
 
   `node_source_details {     image_id    = "ocid1.image.oc1.phx.aaaaaaaaacbbfxlxxvgad32qebxudow6snl5beje6pzubhiqc4jtll67xpjq"     source_type = "image"   }`
 
 Each node is labeled with the key "name" and the value "idp-k8s-cluster", and the SSH public key specified in the variable `ssh_public_key` is used:
 
-hcl
 
   `initial_node_labels {     key   = "name"     value = "idp-k8s-cluster"   }   ssh_public_key = var.ssh_public_key }`
 
