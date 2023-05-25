@@ -139,7 +139,6 @@ First, availability domains are fetched with:
 `data "oci_identity_availability_domains" "ads" {   compartment_id = var.compartment_id }`
 
 Then the node pool is set up:
-
 ```
 resource "oci_containerengine_node_pool" "k8s_node_pool" {
   cluster_id         = oci_containerengine_cluster.k8s_cluster.id
@@ -161,8 +160,8 @@ resource "oci_containerengine_node_pool" "k8s_node_pool" {
     }
     size = 2
   }
-  node_shape = "VM.Standard.A1.Flex
-
+  node_shape = "VM.Standard.A1.Flex"
+```
 Each node in the node pool has a configuration of 6 GB memory and 1 OCPU:
 
   `node_shape_config {     memory_in_gbs = 6     ocpus         = 1   }`
