@@ -13,7 +13,6 @@ variable "public_subnet_id" {
 variable "node_pool_id" {
   type = string
   description = "The OCID of the Node Pool where the compute instances reside"
-  default = "ocid1.nodepool.oc1.phx.aaaaaaaaboestqqfh2rzwjpzyha67chmeoigolfpeqv33rb7pnunic4tkqba"
 }
 variable "ssh_public_key" {
   type        = string
@@ -35,5 +34,16 @@ variable "kube_config_path" {
   description = "kubeconfig location for cluster"
   type        = string
 }
-
+variable "certificate_authority_data" {
+  description = "The certificate authority data from kubeconfig"
+  type        = string
+}
+variable "cluster_id" {
+  description = "Cluster ID from OCID"
+  type        = string
+}
+variable "oci_cluster_endpoint" {
+  description = "Cluster ID from OCID"
+  type        = string
+}
 

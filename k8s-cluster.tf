@@ -1,7 +1,3 @@
-provider "kubernetes" {
-  config_path = var.kube_config_path
-}
-
 resource "kubernetes_namespace" "idp_namespace" {
   metadata {
     name = "idp-ns"

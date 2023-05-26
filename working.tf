@@ -1,13 +1,6 @@
-provider "oci" {
-  tenancy_ocid     = var.compartment_id
-  user_ocid        = var.user_ocid
-  fingerprint      = var.fingerprint
-  region           = var.region
-  private_key_path = file(var.private_key_path)
-}
 module "vcn" {
   source  = "oracle-terraform-modules/vcn/oci"
-  version = "3.1.0"
+  version = "3.5.4"
 
   compartment_id = var.compartment_id
   region         = var.region

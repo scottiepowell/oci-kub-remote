@@ -1,5 +1,6 @@
 venv/*
 terraform.*
 env
-.terraform
+.terraform*
 kubectl
+.terraform.lock.hcl
