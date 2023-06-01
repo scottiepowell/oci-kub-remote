@@ -4,3 +4,7 @@ env
 .terraform*
 kubectl
 .terraform.lock.hcl
+notes.txt
+terraform.tfvars
+.terraform
+*.temp
