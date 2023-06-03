@@ -46,4 +46,7 @@ variable "oci_cluster_endpoint" {
   description = "Cluster ID from OCID"
   type        = string
 }
-
+variable "project_dir" {
+  description = "directory home of the project"
+  type        = string
+}

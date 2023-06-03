@@ -9,3 +9,5 @@ terraform.tfvars
 .terraform
 *.temp
 kubectl
+*.pem
+.terraform*

@@ -19,7 +19,7 @@ resource "oci_network_load_balancer_backend" "free_nlb_backend" {
   count                    = length(local.active_nodes)
   backend_set_name         = oci_network_load_balancer_backend_set.idp_nlb_backend_set.name
   network_load_balancer_id = oci_network_load_balancer_network_load_balancer.idp_nlb.id
-  port                     = 31600
+  port                     = 30080
   target_id                = local.active_nodes[count.index].id
 }
 resource "oci_network_load_balancer_listener" "idp_nlb_listener" {

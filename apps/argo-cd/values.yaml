@@ -1,0 +1,9 @@
+# values.yaml
+server:
+  service:
+    type: NodePort
+    http:
+      nodePort: 31600
+    https:
+      nodePort: 31601
+
